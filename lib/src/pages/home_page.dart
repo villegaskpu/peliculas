@@ -4,7 +4,6 @@ import 'package:peliculas/src/widgets/card_swiper_widget.dart';
 import 'package:peliculas/src/widgets/movie_horizontal_widget.dart';
 
 class HomePage extends StatelessWidget {
-
   final peliculasProvider = new PeliculasProvider();
 
   @override
@@ -16,7 +15,7 @@ class HomePage extends StatelessWidget {
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.search),
-            onPressed: (){},
+            onPressed: () {},
           ),
         ],
       ),
@@ -24,16 +23,13 @@ class HomePage extends StatelessWidget {
         padding: const EdgeInsets.all(8.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: <Widget>[
-            _swiperTarjetas(),
-            _footer(context)
-          ],
+          children: <Widget>[_swiperTarjetas(), _footer(context)],
         ),
       ),
     );
   }
 
-  Widget _swiperTarjetas() { 
+  Widget _swiperTarjetas() {
     return FutureBuilder(
       future: peliculasProvider.getEnCines(),
       builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
@@ -41,13 +37,12 @@ class HomePage extends StatelessWidget {
           return CardSwiper(peliculas: snapshot.data);
         } else {
           return Container(
-            height: 400.0,
+            height: 350.0,
             child: Center(
               child: CircularProgressIndicator(),
             ),
           );
         }
-        
       },
     );
   }
@@ -59,15 +54,16 @@ class HomePage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Container(
-            padding: const EdgeInsets.only(left: 20.0),
-            child: Text('Populares',
-             style: Theme.of(context).textTheme.subhead,
+            padding: const EdgeInsets.only(left: 10.0),
+            child: Text(
+              'Populares',
+              style: Theme.of(context).textTheme.subhead,
             ),
           ),
           FutureBuilder(
             future: peliculasProvider.getPopulares(),
             builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
-              if (snapshot.hasData){
+              if (snapshot.hasData) {
                 return MovieHorizontal(peliculas: snapshot.data);
               } else {
                 return Center(child: CircularProgressIndicator());
