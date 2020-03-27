@@ -1,29 +1,44 @@
 import 'package:flutter/material.dart';
 import 'package:peliculas/src/models/pelicula_model.dart';
 
+import '../models/pelicula_model.dart';
+
 class MovieHorizontal extends StatelessWidget {
   final List<Pelicula> peliculas;
+  final Function sigientePagina;
 
-  MovieHorizontal({@required this.peliculas});
+  MovieHorizontal({@required this.peliculas, @required this.sigientePagina});
+
+  final _pageController = new PageController(
+    initialPage: 1,
+    viewportFraction: 0.3
+  );
 
   @override
   Widget build(BuildContext context) {
     final _screenSize = MediaQuery.of(context).size;
+    _pageController.addListener((){
+      if (_pageController.position.pixels >= _pageController.position.maxScrollExtent - 200) {
+        print('cargar peliculas');
+        sigientePagina();
+      }
+    });
+
+
     return Container(
       height: _screenSize.height * 0.2,
-      child: PageView(
+      child: PageView.builder(
         pageSnapping: false,
-        controller: PageController(initialPage: 1, viewportFraction: 0.3),
-        children: _tarjetas(context),
-      ),
+        controller: _pageController,
+        itemCount: peliculas.length,
+        itemBuilder: (context, index) => tarjeta(context, peliculas[index])
+      )
     );
   }
 
-  List<Widget> _tarjetas(BuildContext context) {
-    return peliculas.map((pelicula) {
-      return Container(
-        padding: const EdgeInsets.only(right: 15.0),
-        child: Column(
+  Widget tarjeta(BuildContext context, Pelicula pelicula) {
+    final peliculaConteiner =  Container(
+          child: Column(
           children: <Widget>[
             ClipRRect(
               borderRadius: BorderRadius.circular(20.0),
@@ -31,11 +46,11 @@ class MovieHorizontal extends StatelessWidget {
                 placeholder: AssetImage('assets/img/loading.gif'),
                 image: NetworkImage(pelicula.getPosterImg()),
                 fit: BoxFit.cover,
-                height: 90.0,
+                height: 100.0,
               ),
             ),
             SizedBox(
-              height: 5.0,
+              height: 3.0,
             ),
             Text(
               pelicula.title,
@@ -45,6 +60,12 @@ class MovieHorizontal extends StatelessWidget {
           ],
         ),
       );
-    }).toList();
+
+      return GestureDetector(
+        child: peliculaConteiner,
+        onTap: (){
+          Navigator.pushNamed(context, 'detalle',arguments: pelicula);
+        },
+      );
   }
 }
